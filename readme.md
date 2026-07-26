@@ -1,4 +1,7 @@
-### Step 1: Start the AI Model in Docker
+# Step 1: Start the AI Model in Docker
+
+### go to docker desktop inside models download a AI model according to configuration then 
+
 
 1. Open **Docker Desktop**.
 
@@ -6,6 +9,7 @@
 
 3. Locate `ai/llama3.2:latest` and click the **Play (▶️)** button to start the local model server.
 
+in app.py change the model name if your model is different.
 
 ### Step 2: Open Terminal & Navigate to Project Folder
 Open Command Prompt (CMD) or VS Code Terminal and navigate to your project directory:

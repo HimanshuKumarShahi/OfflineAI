@@ -5,16 +5,10 @@ import os
 from datetime import datetime
 import sys
 
-# ==========================================
-# ⚙️ SETTINGS
-# ==========================================
 API_URL = "http://localhost:12434/api/generate"
 MODEL_NAME = "ai/llama3.2:latest"
 EXCEL_FILE = "chat_data.xlsx"
 
-# ==========================================
-# 🗄️ DATABASE FUNCTION
-# ==========================================
 def save_to_excel(role, message, tokens=0, error="None"):
     new_row = pd.DataFrame([{
         "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -32,21 +26,18 @@ def save_to_excel(role, message, tokens=0, error="None"):
         else:
             new_row.to_excel(EXCEL_FILE, index=False)
     except Exception:
-        pass # CLI me background errors ko ignore karenge taaki chat disturb na ho
+        pass
 
-# ==========================================
-# 🚀 MAIN CLI APP
-# ==========================================
 def main():
     print("="*50)
-    print("🤖 OFFLINE AI CLI (LLaMA 3.2: 3B)")
+    print("🤖 OFFLINE AI CLI")
     print(" Type 'exit', 'quit' or 'clear' to manage chat.")
     print("="*50)
 
     while True:
         try:
-            # User Input
-            user_input = input("\n🧑 You: ")
+        
+            user_input = input("\n🧑 You : ")
             
             if user_input.lower() in ['exit', 'quit']:
                 print("👋 Bye! Chat saved to Excel.")
@@ -62,7 +53,7 @@ def main():
 
             save_to_excel("user", user_input)
 
-            # AI Response
+         
             print("🤖 AI: ", end="", flush=True)
             
             payload = {
@@ -71,7 +62,7 @@ def main():
                 "stream": True
             }
             
-            # timeout=None lagaya hai taaki timeout error na aaye
+          
             response = requests.post(API_URL, json=payload, stream=True, timeout=None)
             
             if response.status_code != 200:
@@ -79,19 +70,16 @@ def main():
                 continue
                 
             full_reply = ""
-            
-            # Streaming word by word
+         
             for line in response.iter_lines():
                 if line:
                     chunk = json.loads(line)
                     word = chunk.get("response", "")
                     full_reply += word
-                    # Har word ko turant print karega bina naye line ke
                     print(word, end="", flush=True) 
             
-            print() # Nayi line AI ka jawab khatam hone ke baad
-            
-            # Save AI response
+            print() 
+          
             token_count = int(len(full_reply.split()) * 1.3)
             save_to_excel("assistant", full_reply, tokens=token_count)
             
